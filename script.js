@@ -8,6 +8,7 @@ var documentaryRunning = 0;
 var constraints = { audio: true, video: true};
 var vidid = ['402232425','402209255', '402210978', '402199002', '401422787', '402231019'];
 var vimeoID;
+var cuetime = 110;
 
 
 
@@ -33,91 +34,110 @@ function startVideo() {
   .catch(function(err){console.log(err.name + ":" + err.message);});
 }
 
+function generationGender(genders){
+  if(genders === "male"){
+    var genderID = 0;
+  } if (genders === "female"){
+    var genderID = 1;
+  }
+  return genderID;
+}
+
+
+function generationAge(age){
+  if(age<=36){
+    var ageID = 0;
+  } else if(age<=50){
+    var ageID = 2
+  } else {
+    var ageID = 4
+  }
+  return ageID;
+}
+
+
+function documentarySelection(genders, age){
+   documentaryGender = generationGender(genders);
+   documentaryAge = generationAge(age);
+   classificationID = documentaryGender + documentaryAge;
+   // console.log("running documentarySelection");
+   vimeoID = vidid[classificationID];
+   // console.log(age)
+
+
+   var myOptions = {
+     id: vimeoID,
+     width: 640,
+     height: 468,
+     autoplay: true,
+     controls: false
+   };
+
+   // console.log(vimeoID);
+
+   var video01Player= new Vimeo.Player('myVideo',myOptions);
+
+   // video01Player.play();
+
+   video01Player.on('play',function(){
+     documentaryRunning = 1;
+     console.log('video started');
+   });
+
+   video01Player.on('ended', function(){
+     documentaryRunning = 0;
+     video01Player.unload()
+       console.log('video unloaded')
+       console.log('video ended');
+   });
+
+   video01Player.addCuePoint(cuetime,{
+     customKey: 'customValue'
+   }).then(function(id){
+
+   }).catch(function(error){
+     switch(error.name){
+       case 'UnsupportedError':
+
+       break;
+
+       case 'RangeError':
+
+       break;
+
+       default:
+
+        break;
+     }
+   });
+
+   video01Player.on('cuepoint',function(){
+     console.log('hello male millenial');
+     document.getElementById("streamage").innerHTML = "You are " + age + " years old";
+     document.getElementById("streamgender").innerHTML = "You are a " + genders ;
+
+   });
+
+}
+
+
+// listen for webcam image to run then recognise
 video.addEventListener('play', () => {
   const canvas = faceapi.createCanvasFromMedia(video)
   document.body.append(canvas)
   const displaySize = { width: video.width, height: video.height }
   faceapi.matchDimensions(canvas, displaySize)
   setInterval(async () => {
+    console.log("interval running");
     const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions().withAgeAndGender()
     const resizedDetections = faceapi.resizeResults(detections, displaySize)
     canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
     resizedDetections.forEach(detection => {
-
-
-      var genders = detections[0].gender
-      var age = Math.round(detections[0].age)
-
-      function generationGender(){
-        if(genders === "male"){
-          var genderID = 0;
-        } if (genders === "female"){
-          var genderID = 1;
-        }
-        return genderID;
-      }
-
-      function generationAge(){
-        if(age<=36){
-          var ageID = 0;
-      } else if(age<=50){
-        var ageID = 2
-      } else {
-        var ageID = 4
-        }
-        return ageID;
-      }
-
-
-
-      function documentarySelection(){
-         documentaryGender = generationGender();
-         documentaryAge = generationAge();
-         classificationID = documentaryGender + documentaryAge;
-         vimeoID = vidid[classificationID];
-
-         var myOptions = {
-           id: vimeoID,
-           width: 640,
-           height: 468,
-           autoplay: true,
-           controls: false
-         };
-
-         console.log(vimeoID);
-
-         var video01Player= new Vimeo.Player('myVideo',myOptions);
-
-         video01Player.play();
-
-         video01Player.on('play',function(){
-           documentaryRunning = 1;
-           console.log('video started');
-         });
-
-         video01Player.on('ended', function(){
-           documentaryRunning = 0;
-           // vimeoID = 0;
-           video01Player.unload()
-             console.log('video unloaded')
-             console.log('video ended');
-         });
-
-      }
-
-          // something to check current age and gender id to the one given to the current video playing
-          //can seperate the play video part and have it called in docselet
-
-
-
-
-
+      var genders = detections[0].gender;
+      var age = Math.round(detections[0].age);
       if (documentaryRunning === 0){
-        documentarySelection();
-
-
+        documentarySelection(genders, age);
       }
-
 
     })
   }, 1000)
