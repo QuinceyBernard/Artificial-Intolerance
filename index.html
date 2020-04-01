@@ -7,15 +7,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="">
   <meta name="author" content="">
-  <link rel="shortcut icon" type="image/png" href="./assets/favicon.png"/>
 
   <title>Artificial Intolerance</title>
   <script defer src="./js/face-api.min.js"></script>
+  <script defer src="./js/Chart.bundle.min.js"></script>
   <script defer src="script.js"></script>
+  <script defer src="graph.js"></script>
 
   <!-- Bootstrap core CSS -->
   <link href="./vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
+<style>
+body{
+  background-color: #232025;
+  color: #ffffff;
+}
+</style>
 </head>
 
 <body>
@@ -25,7 +31,7 @@
   <!-- Page Content -->
   <div class="container">
     <div class="row">
-      <div class="col-lg-12 text-center">
+      <div class="col-md-12 text-center">
         <h1 class="mt-5">Artificial Intolerance</h1>
         <p class="lead">An experience by Quincey Lawrence-Bernard</p>
 
@@ -34,7 +40,7 @@
   </div>
 <div class="container-fluid">
   <div class="row">
-    <div class="col-lg-12 text-center">
+    <div class="col-md-12 text-center">
       <div id = "myVideo"></div>
     </div>
   </div>
@@ -43,22 +49,39 @@
 <script src="https://player.vimeo.com/api/player.js"></script>
 
 
-
   <div class="container-fluid">
     <div class ="row">
-      <div class="col-lg-12 text-center">
+      <div class="col-md-4" >
+        <div class ="text-center box h-100 d-flex justify-content-center flex-column">
+    <h2 id = "streamgender"></h2>
+  </div>
+</div>
+  <div class="col-md-4">
+    <div class="text-center">
     <div id = "webcamstream">
     <video id="video" width="360" height="180" autoplay muted></video>
     </div>
   </div>
+  </div>
+  <div class="col-md-4">
+    <div class ="text-center box h-100 d-flex justify-content-center flex-column">
+    <h2 id = "streamage"></h2>
+    </div>
+  </div>
+  </div>
 </div>
+
+<!-- <div class="container-fluid">
+  <div class = "row">
+  <div class = "col-xs-6">hello</div>
+  <div class = "col-xs-6">there</div>
 </div>
+</div> -->
 
 
   <!-- Bootstrap core JavaScript -->
   <script src="./vendor/jquery/jquery.slim.min.js"></script>
   <script src="./vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
 </body>
 
 </html>
