@@ -12,33 +12,50 @@
   <script defer src="./js/face-api.min.js"></script>
   <script defer src="./js/Chart.bundle.min.js"></script>
   <script defer src="script.js"></script>
-  <script defer src="graph.js"></script>
+
 
   <!-- Bootstrap core CSS -->
   <link href="./vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 <style>
-body{
-  background-color: #232025;
-  color: #ffffff;
+html{
+  background-color: #232025 !important;
+
 }
+
+body{
+  min-height: 100vh;
+  padding-top: 0%;
+  margin-top: 0%;
+  background-color: #232025 !important;
+  background-image: none;
+  color: #ffffff;
+
+}
+
 </style>
 </head>
 
 <body>
 
-
-
   <!-- Page Content -->
+
   <div class="container">
     <div class="row">
       <div class="col-md-12 text-center">
-        <h1 class="mt-5">Artificial Intolerance</h1>
-        <p class="lead">An experience by Quincey Lawrence-Bernard</p>
+        <h3 class="mt-0.5">Artificial Intolerance</h3>
+        <p class="mt-0.5">An experience by Quincey Lawrence-Bernard</p>
 
       </div>
     </div>
   </div>
-<div class="container-fluid">
+<div id = "loader">
+  <div class = "d-flex justify-content-center">
+    <div class = "spinner-border text-danger" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
+</div>
+<div class="container">
   <div class="row">
     <div class="col-md-12 text-center video-container">
       <div id = "myVideo"></div>
@@ -54,7 +71,7 @@ body{
 <script src="https://player.vimeo.com/api/player.js"></script>
 
 
-  <div class="container-fluid">
+  <div class="container">
     <div class ="row">
       <div class="col-md-4" >
         <div class ="text-center box h-100 d-flex justify-content-center flex-column">
@@ -75,14 +92,6 @@ body{
   </div>
   </div>
 </div>
-
-<!-- <div class="container-fluid">
-  <div class = "row">
-  <div class = "col-xs-6">hello</div>
-  <div class = "col-xs-6">there</div>
-</div>
-</div> -->
-
 
   <!-- Bootstrap core JavaScript -->
   <script src="./vendor/jquery/jquery.slim.min.js"></script>
