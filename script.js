@@ -6,10 +6,12 @@ var documentaryAge;
 var documentaryGender;
 var documentaryRunning = 0;
 var constraints = { audio: true, video: true};
-var vidid = ['402232425','402209255', '402210978', '402199002', '401422787', '402231019'];
+var videoID = ['402232425','402209255', '402210978', '402199002', '401422787', '402231019'];
 var vimeoID;
 var cuetime = 110;
-
+var canvas;
+var displaySize;
+var video01Player;
 
 
 Promise.all([
@@ -19,7 +21,6 @@ Promise.all([
   faceapi.nets.faceExpressionNet.loadFromUri('./models'),
   faceapi.nets.ageGenderNet.loadFromUri('./models')
 ]).then(startVideo)
-
 
 
 function startVideo() {
@@ -56,39 +57,45 @@ function generationAge(age){
 }
 
 
-function documentarySelection(genders, age){
+function documentarySelection(genders, age, emotions){
    documentaryGender = generationGender(genders);
    documentaryAge = generationAge(age);
    classificationID = documentaryGender + documentaryAge;
-   // console.log("running documentarySelection");
-   vimeoID = vidid[classificationID];
-   // console.log(age)
+   vimeoID = videoID[classificationID];
+
+	if(!video01Player){
+
+		var myOptions = {
+			 id: vimeoID,
+			 width: 640,
+			 height: 468,
+			 autoplay: true,
+			controls: false
+		   };
 
 
-   var myOptions = {
-     id: vimeoID,
-     width: 640,
-     height: 468,
-     autoplay: true,
-     controls: false
-   };
+		video01Player= new Vimeo.Player('myVideo',myOptions);
 
-   // console.log(vimeoID);
+  	video01Player.on('play',function(){
+       documentaryRunning = 1;
+       document.getElementById("loader").style.display = "none";
+       console.log('video started');
+     });
 
-   var video01Player= new Vimeo.Player('myVideo',myOptions);
+	}else{
 
-   // video01Player.play();
+		video01Player.loadVideo(vimeoID);
 
-   video01Player.on('play',function(){
-     documentaryRunning = 1;
-     console.log('video started');
-   });
+	}
 
    video01Player.on('ended', function(){
      documentaryRunning = 0;
      video01Player.unload()
-       console.log('video unloaded')
        console.log('video ended');
+       document.getElementById("streamage").innerHTML= "";
+       document.getElementById("streamgender").innerHTML = "";
+    myinterval();
+
    });
 
    video01Player.addCuePoint(cuetime,{
@@ -112,33 +119,54 @@ function documentarySelection(genders, age){
    });
 
    video01Player.on('cuepoint',function(){
-     console.log('hello male millenial');
      document.getElementById("streamage").innerHTML = "You are " + age + " years old";
-     document.getElementById("streamgender").innerHTML = "You are a " + genders ;
-
+     document.getElementById("streamgender").innerHTML = "You are " + emotions + " " + genders ;
    });
-
 }
 
 
-// listen for webcam image to run then recognise
 video.addEventListener('play', () => {
-  const canvas = faceapi.createCanvasFromMedia(video)
+ canvas = faceapi.createCanvasFromMedia(video)
   document.body.append(canvas)
-  const displaySize = { width: video.width, height: video.height }
+  displaySize = { width: video.width, height: video.height }
   faceapi.matchDimensions(canvas, displaySize)
-  setInterval(async () => {
-    console.log("interval running");
+  function myinterval (){
+    setInterval(async () => {
     const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions().withAgeAndGender()
     const resizedDetections = faceapi.resizeResults(detections, displaySize)
     canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
     resizedDetections.forEach(detection => {
       var genders = detections[0].gender;
       var age = Math.round(detections[0].age);
+
+      var emotionID = [
+        {label: "a happy",
+          value: detections[0].expressions.happy},
+        {label: "a sad",
+          value: detections[0].expressions.sad},
+        {label: "an angry",
+          value: detections[0].expressions.angry},
+        {label: "a surprised",
+          value: detections[0].expressions.surprised}
+        ]
+          var maxEmo = Math.max.apply(null, emotionID.map(function(item){
+            return item.value;
+          }))
+
+       function compare(a, b) {
+          if (a.value > b.value) return -1;
+          if (b.value > a.value) return 1;
+           return 0; }
+           emotionID.sort(compare);
+        var emotions = emotionID[0].label;
+
       if (documentaryRunning === 0){
-        documentarySelection(genders, age);
+		  clearInterval(myinterval);
+        documentarySelection(genders, age, emotions);
       }
 
     })
   }, 1000)
+}
+myinterval();
 })
