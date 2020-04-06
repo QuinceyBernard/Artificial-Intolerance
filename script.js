@@ -62,6 +62,7 @@ function documentarySelection(genders, age, emotions){
    documentaryAge = generationAge(age);
    classificationID = documentaryGender + documentaryAge;
    vimeoID = videoID[classificationID];
+	console.log(vimeoID);
 
 	if(!video01Player){
 
