@@ -11,7 +11,7 @@ var vimeoID;
 var cuetime = 110;
 var canvas;
 var displaySize;
-var video01Player;
+var myInterval;
 
 
 Promise.all([
@@ -62,9 +62,6 @@ function documentarySelection(genders, age, emotions){
    documentaryAge = generationAge(age);
    classificationID = documentaryGender + documentaryAge;
    vimeoID = videoID[classificationID];
-	console.log(vimeoID);
-
-	if(!video01Player){
 
 		var myOptions = {
 			 id: vimeoID,
@@ -81,22 +78,18 @@ function documentarySelection(genders, age, emotions){
        documentaryRunning = 1;
        document.getElementById("loader").style.display = "none";
        console.log('video started');
+       clearInterval(myInterval);
      });
 
-	}else{
-
-		video01Player.loadVideo(vimeoID);
-
-	}
 
    video01Player.on('ended', function(){
-     documentaryRunning = 0;
-     video01Player.unload()
+     video01Player.destroy().then(function(){
+       documentaryRunning = 0;
        console.log('video ended');
        document.getElementById("streamage").innerHTML= "";
        document.getElementById("streamgender").innerHTML = "";
-    myinterval();
-
+     });
+     myInterval();
    });
 
    video01Player.addCuePoint(cuetime,{
@@ -162,12 +155,13 @@ video.addEventListener('play', () => {
         var emotions = emotionID[0].label;
 
       if (documentaryRunning === 0){
-		  clearInterval(myinterval);
         documentarySelection(genders, age, emotions);
       }
 
     })
   }, 1000)
 }
-myinterval();
+if (documentaryRunning === 0){
+  myinterval();
+}
 })
