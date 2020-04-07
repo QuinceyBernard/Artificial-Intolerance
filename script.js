@@ -86,6 +86,7 @@ function documentarySelection(genders, age, emotions){
      video01Player.destroy().then(function(){
        documentaryRunning = 0;
        console.log('video ended');
+       document.getElementById("loader").style.display = "unset";
        document.getElementById("streamage").innerHTML= "";
        document.getElementById("streamgender").innerHTML = "";
      });
